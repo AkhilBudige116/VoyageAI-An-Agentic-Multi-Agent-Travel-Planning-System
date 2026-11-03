@@ -53,7 +53,9 @@ if not GROQ_API_KEY:
 # =========================
 
 llm = ChatGroq(
-    model="llama-3.3-70b-versatile",
+    model="openai/gpt-oss-20b",
+    temperature=0.2,
+    max_tokens=768,
     api_key=GROQ_API_KEY
 )
 
@@ -237,21 +239,32 @@ def weather_agent(state: TravelState):
 
 def itinerary_agent(state: TravelState):
     prompt = f"""
-Create a complete travel itinerary.
+Create a complete travel plan.
 
 User Query:
 {state['user_query']}
 
 Flight Results:
-{state['flight_results']}
+{str(state['flight_results'])[:1200]}
 
 Hotel Results:
-{state['hotel_results']}
+{str(state['hotel_results'])[:1200]}
 
 Weather Results:
-{state['weather_results']}
+{str(state['weather_results'])[:1200]}
 
-Make the itinerary practical, budget-aware, and easy to follow.
+Include these sections:
+
+1. Trip Summary
+2. Flight Information
+3. Hotel Suggestions
+4. Weather Information
+5. Day-by-Day Itinerary
+6. Estimated Budget
+7. Final Recommendations
+
+Make the plan practical, budget-aware and concise.
+Do not invent live flight prices or hotel availability.
 """
 
     response = llm.invoke([
